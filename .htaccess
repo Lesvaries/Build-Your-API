@@ -1,0 +1,14 @@
+# Active le moteur de réécriture d'URL d'Apache
+RewriteEngine On
+
+RewriteRule ^src/.*$ - [F,L]
+
+# Si le fichier ou dossier demandé existe réellement → l'accès direct est ok
+# (important pour les images, CSS, etc. si tu en avais)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Sinon → tout rediriger vers index.php
+# [L] = Last rule (arrêter après cette règle)
+# [QSA] = Query String Append (conserver les paramètres d'URL)
+RewriteRule ^(.*)$ index.php [L,QSA]
