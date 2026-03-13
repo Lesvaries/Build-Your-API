@@ -43,4 +43,57 @@ if (($segments[0] ?? '') !== 'api') {
     exit();
 }
 
+$ressource = $segments[1] ?? '';
+
+$id = isset($segments[2]) ? (int)$segments[2] : null;
+
+// 5. Routage 
+
+switch ($ressource) {
+    case 'tasks':
+        switch($method) {
+            case 'GET':
+                if ($id !== null) {
+                    $controller->getById($id);
+                } else {
+                    $controller->getAll();
+                }
+                break;
+            
+            case 'POST':
+                $controller->create();
+                break;
+            
+            case 'PUT':
+            case 'PATCH':
+                if ($id !== null) {
+                    $controller->update($id);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(["success" => false, "error" => "ID requis pour la mise à jour."]);
+                }
+                break;
+            
+            case 'DELETE':
+                if ($id !== null) {
+                    $controller->delete($id);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(["success" => false, "error" => "ID requis pour la suppression."]);
+                }
+                break;
+            
+            default:
+                http_response_code(405);
+                echo json_encode(["success" => false, "error" => "Méthode HTTP non autorisée."]);
+        }
+        break;
+
+    default:
+        http_response_code(404);
+        echo json_encode(["success" => false, "error" => "Ressource '{$ressource}' introuvable."]);
+        break;
+            
+}
+
 ?>
