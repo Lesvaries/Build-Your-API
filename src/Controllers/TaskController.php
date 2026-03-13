@@ -29,7 +29,7 @@ class TaskController {
             http_response_code(404);
             echo json_encode([
                 "success" => false,
-                "message" => "Task not found"
+                "message" => "Tâche {$id} non trouvée."
             ], JSON_UNESCAPED_UNICODE);
             return;
         }

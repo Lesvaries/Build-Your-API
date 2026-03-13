@@ -22,15 +22,24 @@ require_once 'src/Controllers/TaskController.php';
 $database = new Database();
 $connexion = $database->getConnection();
 $taskModel = new Task($connexion);
-// $controller = new TaskController($taskModel);
+$controller = new TaskController($taskModel);
 
 // 4. Analyse de l'URL et de la méthjode HTTP 
 
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
+$basePath = dirname($_SERVER['SCRIPT_NAME']);
+
+if ($basePath === '/' || $basePath === '\\') {
+    $basePath = '';
+}
+
+if (strpos($uri, $basePath) === 0) {
+    $uri = substr($uri, strlen($basePath));
+}
+
 // Nettoyer l'URI : supprimer les slashes en début et fin
-// Ex: "/api/tasks/" → "api/tasks"
 $uri = trim($uri, '/');
 
 // Découper l'URI en segments
