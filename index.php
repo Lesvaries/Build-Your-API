@@ -29,21 +29,20 @@ $controller = new TaskController($taskModel);
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
-$basePath = dirname($_SERVER['SCRIPT_NAME']);
+// 1. On récupère le chemin de base (ex: /Build-Your-API)
+$basePath = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
 
-if ($basePath === '/' || $basePath === '\\') {
-    $basePath = '';
-}
+// 2. On nettoie l'URI de manière insensible à la casse
+// On utilise str_ireplace (le 'i' signifie case-insensitive)
+$uri = str_ireplace($basePath, '', $_SERVER['REQUEST_URI']);
 
-if (strpos($uri, $basePath) === 0) {
-    $uri = substr($uri, strlen($basePath));
-}
+// 3. On enlève les éventuels paramètres de requête (?id=1...)
+$uri = parse_url($uri, PHP_URL_PATH);
 
-// Nettoyer l'URI : supprimer les slashes en début et fin
+// 4. Nettoyage final des slashes
 $uri = trim($uri, '/');
 
-// Découper l'URI en segments
-// Ex: "api/tasks/42" → ["api", "tasks", "42"]
+// 5. Découpage
 $segments = explode('/', $uri);
 
 if (($segments[0] ?? '') !== 'api') {
