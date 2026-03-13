@@ -1,1 +1,2 @@
 curl -X GET http://localhost/Build-your-api/api/tasks
+curl -X GET http://localhost/Build-your-api/api/tasks/1
