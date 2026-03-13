@@ -1,6 +1,6 @@
 <?php
 // On inclut la classe Database pour pouvoir s'en servir
-require_once '../../config/Database.php';
+require_once 'config/Database.php';
 
 class Task {
     // ─── Propriétés ─────────────────────────────────────────────
@@ -92,5 +92,19 @@ class Task {
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $stmt->execute();
+    }
+
+    public function delete(): bool {
+        $query = "DELETE FROM {$this->table} WHERE id = :id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+
+    }
+
+    public function getLastInsertId(): int {
+        return (int)$this->conn->lastInsertId();
     }
 }
