@@ -3,13 +3,35 @@
 class Database {
     // ─── Paramètres de connexion ──────────────────────────────────
     // En production, ces valeurs viendraient d'un fichier .env
-    private string $host = "localhost";
-    private string $dbName = "taskmaster_db";
-    private string $username = "root";
-    private string $password = ""; // Vide sur XAMPP par défaut
+    private string $host;
+    private string $dbName;
+    private string $username;
+    private string $password;
 
     // L'instance PDO — null avant la première connexion
     private ?PDO $conn = null;
+
+    public function __construct() {
+        // 1. On charge le fichier .env situé à la racine du projet
+        // __DIR__ représente le dossier 'config', donc '/../' remonte à la racine
+        $envFilePath = __DIR__ . '/../.env';
+        
+        if (!file_exists($envFilePath)) {
+            // Sécurité si le fichier n'existe pas
+            http_response_code(500);
+            echo json_encode(["success" => false, "error" => "Fichier .env introuvable."]);
+            exit();
+        }
+
+        // 2. On lit le fichier et on le transforme en tableau
+        $env = parse_ini_file($envFilePath);
+
+        // 3. On assigne les valeurs aux propriétés de la classe
+        $this->host = $env['DB_HOST'];
+        $this->dbName = $env['DB_NAME'];
+        $this->username = $env['DB_USER'];
+        $this->password = $env['DB_PASS'];
+    }
 
     /**
      * Retourne la connexion PDO.
